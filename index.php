@@ -56,7 +56,7 @@ if (defined('ENVIRONMENT'))
  * as this file.
  *
  */
-	$system_path = 'system';
+	$system_path = 'system/codeigniter';
 
 /*
  *---------------------------------------------------------------
@@ -72,7 +72,23 @@ if (defined('ENVIRONMENT'))
  * NO TRAILING SLASH!
  *
  */
-	$application_folder = 'application';
+	$application_folder = 'system/cms';
+
+/*
+  *---------------------------------------------------------------
+ * ADDON FOLDER NAME
+  *---------------------------------------------------------------
+  *
+ * If you want this front controller to use a different "application"
+ * folder then the default one you can set its name here. The folder
+ * can also be renamed or relocated anywhere on your server.  If
+ * you do, use a full server path. For more info please see the user guide:
+ * http://codeigniter.com/user_guide/general/managing_apps.html
+  *
+ * NO TRAILING SLASH!
+  *
+ */
+$addon_folder = 'addons';
 
 /*
  * --------------------------------------------------------------------
@@ -139,6 +155,11 @@ if (defined('ENVIRONMENT'))
 	{
 		chdir(dirname(__FILE__));
 	}
+  
+  if (function_exists('realpath') AND @realpath($system_path) !== FALSE)
+  {
+    $system_path = realpath($system_path).'/';
+  }
 
 	if (realpath($system_path) !== FALSE)
 	{
@@ -169,12 +190,23 @@ if (defined('ENVIRONMENT'))
 	// Path to the system folder
 	define('BASEPATH', str_replace("\\", "/", $system_path));
 
+
+	// The site slug: (example.com)
+	define('SITE_DOMAIN', $_SERVER['HTTP_HOST']);
+
+	// This only allows you to change the name. ADDONPATH should still be used in the app
+	define('ADDON_FOLDER', $addon_folder.'/');
+
+	// Path to the addon folder that is shared between sites
+	define('SHARED_ADDONPATH', 'addons/shared_addons/');
+
 	// Path to the front controller (this file)
 	define('FCPATH', str_replace(SELF, '', __FILE__));
 
 	// Name of the "system folder"
+  $parts = explode('/', trim(BASEPATH, '/'));
 	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
-
+  unset($parts);
 
 	// The path to the "application" folder
 	if (is_dir($application_folder))
